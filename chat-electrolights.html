@@ -3,10 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat | Electrolights</title>
+    <title>Electrolights Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #chatBox {
+            width: 100%;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .message {
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .message p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        #nameInput,
+        #messageInput {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        #sendButton {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <h1>Electrolights Chat</h1>
         <div id="chatBox"></div>
         <input type="text" id="nameInput" placeholder="Your Name">
         <input type="text" id="messageInput" placeholder="Type your message...">
@@ -33,8 +91,11 @@
         function displayMessage(data) {
             const chatBox = document.getElementById("chatBox");
             const messageElement = document.createElement("div");
-            messageElement.textContent = `${data.name} (${data.date}): ${data.message}`;
+            messageElement.classList.add("message");
+            messageElement.innerHTML = `<p><strong>${data.name}</strong> (${data.date}): ${data.message}</p>`;
             chatBox.appendChild(messageElement);
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         // Event listener for the send button
