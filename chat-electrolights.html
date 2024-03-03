@@ -82,6 +82,7 @@
             if (name && message) {
                 const data = { name, message };
                 socket.emit('message', data); // Send the message to the server
+                document.getElementById("messageInput").value = ""; // Clear the input field
             } else {
                 alert("Please enter your name and message.");
             }
@@ -111,3 +112,4 @@
     </script>
 </body>
 </html>
+
