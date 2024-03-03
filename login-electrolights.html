@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login | Electrolights</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 400px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .login-animation {
+            margin-top: -50px; /* Adjust the margin to move the animation up */
+            font-size: 24px;
+            color: #fff;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -100%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: #ff5555;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-animation">Login</div>
+    <h2>Login</h2>
+    <form id="loginForm" onsubmit="return validateForm()" method="post">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <input type="submit" value="Login">
+    </form>
+    <div class="error-message" id="errorMessage"><?php echo $error_message; ?></div>
+</div>
+
+<script>
+    function validateForm() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if (username === "nilan" && password === "nilan1234") {
+            // Redirect to nilan-login.html
+            window.location.href = "nilan-login.html";
+            return false; // Prevent form submission
+        } else if (username === "nithin" && password === "nithin1234") {
+            // Redirect to nithin-login.html
+            window.location.href = "nithin-login.html";
+            return false; // Prevent form submission
+        } else if (username === "howard" && password === "howard1234") {
+            // Redirect to nithin-login.html
+            window.location.href = "howard-login.html";
+            return false; // Prevent form submission
+        } else if (username === "quinn" && password === "quinn1234") {
+            // Redirect to nithin-login.html
+            window.location.href = "quinn-login.html";
+            return false; // Prevent form submission
+        } else if (username === "yesh" && password === "yesh1234") {
+            // Redirect to nithin-login.html
+            window.location.href = "yesh-login.html";
+            return false; // Prevent form submission
+        } else if (username === "aarav" && password === "aarav1234") {
+            // Redirect to shaurya-login.html
+            window.location.href = "aarav-login.html";
+            return false; // Prevent form submission
+        } else if (username === "shaurya" && password === "shaurya1234") {
+            // Redirect to shaurya-login.html
+            window.location.href = "shaurya-login.html";
+            return false; // Prevent form submission
+        } else if (username === "poovendiran" && password === "poovendiran1234") {
+            // Redirect to poof-login.html
+            window.location.href = "poof-login.html";
+            return false; // Prevent form submission
+        } else if (username === "ashwin" && password === "aswhin1234") {
+            // Redirect to shaurya-login.html
+            window.location.href = "ashwin-login.html";
+            return false; // Prevent form submission
+        } else if (username === "akshaj" && password === "akshaj1234") {
+            // Redirect to shaurya-login.html
+            window.location.href = "akshaj-login.html";
+            return false; // Prevent form submission
+        } else {
+            // Show error message
+            document.getElementById("errorMessage").innerText = "Invalid username or password";
+            return false; // Prevent form submission
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrolights Upload Page</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #333;
+        color: #fff;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #444;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    #fileInput {
+        margin-bottom: 10px;
+    }
+    
+    #folderSelect {
+        margin-bottom: 10px;
+    }
+    
+    .file {
+        margin-bottom: 10px;
+    }
+    
+    .file img,
+    .file video {
+        max-width: 100px;
+        max-height: 100px;
+        cursor: pointer;
+    }
+    
+    .folder {
+        margin-bottom: 10px;
+        cursor: pointer;
+        padding: 10px;
+        background-color: #555;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .folder:hover {
+        background-color: #666;
+    }
+
+    .back-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: #0056b3;
+    }
+
+    .file-container {
+        position: relative;
+    }
+
+    .full-image-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .full-image {
+        max-width: 90%;
+        max-height: 90%;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Electrolights Upload Page</h1>
+    <input type="file" id="fileInput" multiple>
+    <select id="folderSelect">
+        <option value="">Select Folder</option>
+    </select>
+    <input type="text" id="newFolderInput" placeholder="New Folder Name">
+    <button id="createFolderButton">Create Folder</button>
+    <button id="uploadButton">Upload</button>
+
+    <div id="folderContainer"></div>
+    <div id="fileContainer" class="file-container"></div>
+</div>
+
+<script>
+    var folders = JSON.parse(localStorage.getItem("folders")) || [];
+    var currentFolder = "";
+
+    // Function to create a folder
+    function createFolder() {
+        var folderName = document.getElementById("newFolderInput").value;
+        if (folderName) {
+            folders.push({ name: folderName, files: [] });
+            localStorage.setItem("folders", JSON.stringify(folders));
+            displayFolders();
+            document.getElementById("newFolderInput").value = ""; // Clear input field
+            updateFolderSelect();
+        } else {
+            alert("Please enter a folder name.");
+        }
+    }
+
+    // Function to update folder select options
+    function updateFolderSelect() {
+        var folderSelect = document.getElementById("folderSelect");
+        folderSelect.innerHTML = "<option value=''>Select Folder</option>";
+        folders.forEach(function(folder) {
+            folderSelect.innerHTML += "<option value='" + folder.name + "'>" + folder.name + "</option>";
+        });
+    }
+
+    // Function to handle file upload
+    function handleUpload() {
+        var folderName = document.getElementById("folderSelect").value;
+        if (!folderName) {
+            alert("Please select a folder.");
+            return;
+        }
+        var fileInput = document.getElementById("fileInput");
+        var files = fileInput.files;
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var fileData = event.target.result;
+                var folderIndex = folders.findIndex(function(folder) {
+                    return folder.name === folderName;
+                });
+                folders[folderIndex].files.push({ name: file.name, type: file.type, data: fileData });
+                localStorage.setItem("folders", JSON.stringify(folders));
+                displayFiles(folderName);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Function to display files in a folder
+    function displayFiles(folderName) {
+        currentFolder = folderName;
+        var fileContainer = document.getElementById("fileContainer");
+        fileContainer.innerHTML = ""; // Clear existing files
+        var folder = folders.find(function(folder) {
+            return folder.name === folderName;
+        });
+        if (folder) {
+            folder.files.forEach(function(file) {
+                var fileDiv = document.createElement("div");
+                fileDiv.classList.add("file");
+                if (file.type.startsWith("image")) {
+                    fileDiv.innerHTML = "<img src='" + file.data + "' alt='" + file.name + "'>";
+                    fileDiv.addEventListener("click", function() {
+                        displayFullImage(file.data);
+                    });
+                } else if (file.type.startsWith("video")) {
+                    fileDiv.innerHTML = "<video controls><source src='" + file.data + "' type='" + file.type + "'></video>";
+                    fileDiv.addEventListener("click", function() {
+                        window.open(file.data, "_blank");
+                    });
+                } else {
+                    fileDiv.textContent = file.name;
+                }
+                fileContainer.appendChild(fileDiv);
+            });
+        }
+    }
+
+    // Function to display full-size image
+    function displayFullImage(imageSrc) {
+        var fullImageContainer = document.createElement("div");
+        fullImageContainer.classList.add("full-image-container");
+
+        var fullImage = document.createElement("img");
+        fullImage.src = imageSrc;
+        fullImage.classList.add("full-image");
+        fullImage.addEventListener("click", function() {
+            fullImageContainer.remove();
+        });
+
+        fullImageContainer.appendChild(fullImage);
+        document.body.appendChild(fullImageContainer);
+    }
+
+    // Function to display folders
+    function displayFolders() {
+        var folderContainer = document.getElementById("folderContainer");
+        folderContainer.innerHTML = ""; // Clear existing folders
+        folders.forEach(function(folder) {
+            var folderDiv = document.createElement("div");
+            folderDiv.classList.add("folder");
+            folderDiv.textContent = folder.name;
+            folderDiv.addEventListener("click", function() {
+                displayFiles(folder.name);
+            });
+            folderContainer.appendChild(folderDiv);
+        });
+    }
+
+    // Event listener for create folder button
+    document.getElementById("createFolderButton").addEventListener("click", createFolder);
+
+    // Event listener for upload button
+    document.getElementById("uploadButton").addEventListener("click", handleUpload);
+
+    // Display existing folders and update folder select options when the page loads
+    displayFolders();
+    updateFolderSelect();
+
+    // Back button event listener
+    document.addEventListener("click", function(event) {
+        if (event.target.classList.contains("back-button")) {
+            displayFolders();
+            currentFolder = "";
+        }
+    });
+
+    // Update file container when folder is clicked
+    document.getElementById("folderContainer").addEventListener("click", function(event) {
+        if (event.target.classList.contains("folder")) {
+            displayFiles(event.target.textContent);
+            var backButton = document.createElement("button");
+            backButton.textContent = "Back";
+            backButton.classList.add("back-button");
+            document.body.appendChild(backButton);
+        }
+    });
+</script>
+
+</body>
+</html>
