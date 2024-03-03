@@ -1,36 +1,41 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Serve the static files (HTML, CSS, JavaScript)
-app.use(express.static('public'));
+// Load chat history from file
+let chatHistory = [];
+try {
+    const data = fs.readFileSync('chat_history.json', 'utf8');
+    chatHistory = JSON.parse(data);
+} catch (err) {
+    console.error("Error reading chat history:", err);
+}
 
-const chatHistory = []; // Array to store chat messages
+// Save chat history to file
+function saveChatHistory() {
+    fs.writeFileSync('chat_history.json', JSON.stringify(chatHistory), 'utf8');
+}
 
-// Event handler for new connections
+// Socket.IO connection
 io.on('connection', (socket) => {
-    console.log('A user connected');
-
-    // Send chat history to the new client
+    // Send chat history to newly connected client
     socket.emit('chatHistory', chatHistory);
 
-    // Event handler for new messages
+    // Receive new messages from clients and broadcast to all clients
     socket.on('message', (data) => {
-        chatHistory.push(data); // Store the message
-        io.emit('message', data); // Broadcast the message to all clients
-    });
-
-    // Event handler for disconnections
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
+        chatHistory.push(data);
+        saveChatHistory();
+        io.emit('message', data); // Broadcast message to all clients
     });
 });
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
+
