@@ -1,115 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electrolights Chat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        #chatBox {
-            width: 100%;
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .message {
-            background-color: #f2f2f2;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 5px;
-        }
-        
-        .message p {
-            margin: 0;
-            font-size: 14px;
-            color: #333;
-        }
-        
-        #nameInput,
-        #messageInput {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        
-        #sendButton {
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat | Electrolights</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    #chatBox {
+        width: 100%;
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    #messageInput {
+        width: calc(100% - 80px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    
+    #nameInput {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    
+    #sendButton {
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Electrolights Chat</h1>
-        <div id="chatBox"></div>
-        <input type="text" id="nameInput" placeholder="Your Name">
-        <input type="text" id="messageInput" placeholder="Type your message...">
-        <button id="sendButton">Send</button>
-    </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
+<div class="container">
+    <div id="chatBox"></div>
+    <input type="text" id="nameInput" placeholder="Your Name">
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button id="sendButton">Send</button>
+</div>
 
-        // Function to send a message
-        function sendMessage() {
-            const name = document.getElementById("nameInput").value;
-            const message = document.getElementById("messageInput").value;
-            if (name && message) {
-                const data = { name, message };
-                socket.emit('message', data); // Send the message to the server
-                document.getElementById("messageInput").value = ""; // Clear the input field
-            } else {
-                alert("Please enter your name and message.");
-            }
-        }
-
-        // Function to display a message
-        function displayMessage(data) {
-            const chatBox = document.getElementById("chatBox");
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message");
-            messageElement.innerHTML = `<p><strong>${data.name}</strong> (${data.date}): ${data.message}</p>`;
+<script>
+    // Function to send a message
+    function sendMessage() {
+        var name = document.getElementById("nameInput").value;
+        var message = document.getElementById("messageInput").value;
+        if (name && message) {
+            var chatBox = document.getElementById("chatBox");
+            var messageElement = document.createElement("div");
+            var date = getCurrentDate();
+            messageElement.textContent = name + " (" + date + "): " + message;
             chatBox.appendChild(messageElement);
-            // Scroll to bottom
-            chatBox.scrollTop = chatBox.scrollHeight;
+            document.getElementById("messageInput").value = ""; // Clear the input field
+            // Store message in local storage
+            var chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+            chatHistory.push({ name: name, message: message, date: date });
+            localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+        } else {
+            alert("Please enter your name and message.");
         }
+    }
 
-        // Event listener for the send button
-        document.getElementById("sendButton").addEventListener("click", sendMessage);
+    // Function to get current date and time
+    function getCurrentDate() {
+        var now = new Date();
+        var date = now.toDateString();
+        var time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+        var storedDate = localStorage.getItem("currentDate");
+        if (!storedDate || storedDate !== date) {
+            localStorage.setItem("currentDate", date);
+            return formatDate(now);
+        } else {
+            return time;
+        }
+    }
 
-        // Event listener for new messages
-        socket.on('message', displayMessage);
+    // Function to format date
+    function formatDate(date) {
+        var today = new Date();
+        var yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        var messageDate = date.getDate();
+        var messageMonth = date.getMonth() + 1;
+        var messageYear = date.getFullYear();
+        var messageTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+        
+        if (date.toDateString() === today.toDateString()) {
+            return "Today " + messageTime;
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return "Yesterday " + messageTime;
+        } else {
+            return messageMonth + "/" + messageDate + "/" + messageYear + " " + messageTime;
+        }
+    }
 
-        // Event listener for chat history
-        socket.on('chatHistory', (chatHistory) => {
-            chatHistory.forEach(displayMessage);
+    // Event listener for the send button
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+
+    // Event listener for pressing enter key
+    document.getElementById("messageInput").addEventListener("keypress", function(event) {
+        if (event.keyCode === 13) { // Enter key pressed
+            event.preventDefault(); // Prevent form submission
+            sendMessage(); // Call the sendMessage function
+        }
+    });
+
+    // Function to load chat history from local storage
+    function loadChatHistory() {
+        var chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+        var chatBox = document.getElementById("chatBox");
+        chatHistory.forEach(function(chat) {
+            var messageElement = document.createElement("div");
+            messageElement.textContent = chat.name + " (" + chat.date + "): " + chat.message;
+            chatBox.appendChild(messageElement);
         });
-    </script>
+    }
+
+    // Call the loadChatHistory function when the page loads
+    window.onload = loadChatHistory;
+</script>
+
 </body>
 </html>
+
 
