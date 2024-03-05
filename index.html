@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Electrolights</title>
     <link rel="stylesheet" href="style.css">
@@ -43,30 +44,87 @@
             text-decoration: none;
             border-radius: 5px;
             font-size: 18px;
-            z-index: 1; 
+            z-index: 1;
         }
 
         .login-button:hover {
             background-color: #0056b3;
         }
 
+        p3 {
+            display: inline;
+            font-weight: bold;
+            color: #00ff00; /* Change the color as needed */
+        }
+
         p4 {
-            display: inline; 
+            display: inline;
+        }
+
+        .about-us-section {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .about-us-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Add smooth scrolling effect */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Style for the navigation link */
+        .scroll-to-2024-2025 {
+            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .scroll-to-2024-2025:hover {
+            color: #00ff00; /* Change the color as needed */
         }
     </style>
 </head>
 
 <body>
 
-<header>
-    <p4>Electrolights</p4>
-    <a href="login-electrolights.html" class="login-button">Login</a>
-</header>
+    <header>
+        <p4>Electrolights</p4>
+        <a href="login-electrolights.html" class="login-button">Login</a>
+    </header>
 
-<div class="container">
-    <p>Welcome to the official website of the <p3>Electrolights</p3>, an AJHS Robotics school team</p>
-</div>
+    <div class="container">
+        <p>Welcome to the official website of the <p3>Electrolights</p3>, an AJHS Robotics school team
+            Current Members:
+            Nithin
+        </p>
+
+        <!-- About Us Section for 2023-2024 -->
+        <div class="about-us-section">
+            <h2>About Us - 2023-2024</h2>
+            <p>Placeholder</p>
+            <img src="placeholder-image.jpg" alt="Placeholder Image" class="about-us-image">
+        </div>
+
+        <!-- Navigation link to scroll down to 2024-2025 -->
+        <p><a href="#about-2024-2025" class="scroll-to-2024-2025">Scroll to 2024-2025</a></p>
+    </div>
+
+    <!-- About Us Section for 2024-2025 -->
+    <div id="about-2024-2025" class="container about-us-section">
+        <h2>About Us - 2024-2025</h2>
+        <p>Placeholder for the upcoming year</p>
+        <img src="blank-image.jpg" alt="Blank Image" class="about-us-image">
+    </div>
 
 </body>
 
 </html>
+
